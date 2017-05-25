@@ -3,68 +3,122 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\BookReviews;
+use app\models\BookReviewsSearch;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
-
+/**
+ * BookReviewsController implements the CRUD actions for BookReviews model.
+ */
 class BookReviewsController extends Controller
 {
-    public function actionIndex()
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
     {
-        $data['booksList'] = $this->getBooksList();
-        return $this->render('index', $data);
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
     }
 
+    /**
+     * Lists all BookReviews models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new BookReviewsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single BookReviews model.
+     * @param integer $id
+     * @return mixed
+     */
     public function actionView($id)
     {
-        $data['id'] = $id;
-        $booksList = $this->getBooksList();
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
 
-        foreach($booksList as $book)
-        {
-            if($id == $book['id'])
-            {
-                $data['book_title'] = $book['book_title'];
-                $data['author'] = $book['author'];
-                $data['amazon_url'] = $book['amazon_url'];
-            }
+    /**
+     * Creates a new BookReviews model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new BookReviews();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         }
-
-        return $this->render('view', $data);
     }
 
-
-
-    //Temporary Stuff
-    private function getBooksList()
+    /**
+     * Updates an existing BookReviews model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
     {
-        $booksList = [
-            ['id' => 1, 'book_title' => 'A Canticle for Leibowitz', 'author' => 'Walter M. Miller Jr.', 'amazon_url' => 'http://www.amazon.com'],
-            ['id' => 2, 'book_title' => 'Atlas Shrugged', 'author' => 'Ayn Rand', 'amazon_url' => 'http://www.amazon.com'],
-            ['id' => 7, 'book_title' => 'The Demolished Man', 'author' => 'Alfred Bester', 'amazon_url' => 'http://www.amazon.com']
-        ];
+        $model = $this->findModel($id);
 
-        return $booksList;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
     }
 
-/*
-    public function actionIndex()
+    /**
+     * Deletes an existing BookReviews model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
     {
-        $data['name'] = "David";
-        $data['age'] = "21";
-        $data['city'] = "sunny Uman";
+        $this->findModel($id)->delete();
 
-        return $this->render('hello', $data);
+        return $this->redirect(['index']);
     }
 
-    public function actionAnotherPage()
+    /**
+     * Finds the BookReviews model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return BookReviews the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
     {
-        $this->layout = "alt_layout";
-
-        $data['name'] = "David";
-        $data['age'] = "21";
-        $data['city'] = "sunny Uman";
-
-        return $this->render('hello', $data);
+        if (($model = BookReviews::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
-*/
 }

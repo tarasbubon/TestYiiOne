@@ -1,31 +1,36 @@
-<h1>Book Reviews List</h1>
+<?php
 
-<table class="table table-striped">
+use yii\helpers\Html;
+use yii\grid\GridView;
 
-    <tr>
-        <th>Book Title</th>
-        <th>Author</th>
-        <th>Action</th>
-    </tr>
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\BookReviewsSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
-    <?php
-    foreach($booksList as $book) {
-        $id = $book['id'];
-    ?>
+$this->title = 'Book Reviews';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="book-reviews-index">
 
-    <tr>
-        <td><?= $book['book_title'] ?></td>
-        <td><?= $book['author'] ?></td>
-        <td><a href="/book-reviews/view?id=<?= $id ?>">
-                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                View
-            </a>
-        </td>
-    </tr>
-    <?php
-    }
-    ?>
+    <h1><?= Html::encode($this->title) ?></h1>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-</table>
-<?= $this->render('_advert') ?>
+    <p>
+        <?= Html::a('Create Book Review', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
 
+            'id',
+            'book_title',
+            'author',
+            'amazon_url:url',
+            'review:ntext',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+</div>

@@ -1,29 +1,39 @@
 <?php
-    $this->params['breadcrumbs'][] = ['label' => 'Book Reviews', 'url' => ['/book-reviews']];
-    $this->params['breadcrumbs'][] = $book_title;
+
+use yii\helpers\Html;
+use yii\widgets\DetailView;
+
+/* @var $this yii\web\View */
+/* @var $model app\models\BookReviews */
+
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Book Reviews', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="book-reviews-view">
 
-<h1>Review for book ID <?= $id ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-<table class="table table-striped table-bordered">
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 
-    <tr>
-        <td>Book Title</td>
-        <td><?= $book_title ?></td>
-    </tr>
-    <tr>
-        <td>Author</td>
-        <td><?= $author ?></td>
-    </tr>
-    <tr>
-        <td>Amazon URL</td>
-        <td><a href="<?= $amazon_url ?>">
-                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                Amazon
-            </a>
-        </td>
-    </tr>
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            'book_title',
+            'author',
+            'amazon_url:url',
+            'review:ntext',
+        ],
+    ]) ?>
 
-</table>
-<?php
-echo $this->context->renderPartial('_advert');
+</div>
