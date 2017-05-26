@@ -32,7 +32,22 @@ class BookReviews extends \yii\db\ActiveRecord
             [['book_title', 'author', 'amazon_url', 'review'], 'required'],
             [['review'], 'string'],
             [['book_title', 'author', 'amazon_url'], 'string', 'max' => 255],
+            ['book_title', 'unique'],
+            ['book_title', 'validateTitle', 'params' => ['author' => 'author', 'amazon_url' => 'amazon_url', 'review' => 'review']]
         ];
+    }
+
+    public function validateTitle($attribute, $params)
+    {
+        $book_title = $this->$attribute;
+        $author = $this->$params['author'];
+        $amazon_url = $this->$params['amazon_url'];
+        $review = $this->$params['review'];
+
+        if($book_title == "Jimi" && $author == "Hendrix" && $amazon_url == "guitar" && $review == "player")
+        {
+            $this->addError($attribute, "You are not allowed to see Jimi Hendrix guitar player");
+        }
     }
 
     /**

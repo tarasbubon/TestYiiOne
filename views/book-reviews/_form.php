@@ -13,7 +13,10 @@ use yii\widgets\ActiveForm;
 
         <div class="book-reviews-form">
 
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin([
+                'enableAjaxValidation' => true,
+                'validationUrl' => 'validate'
+            ]); ?>
 
             <?= $form->field($model, 'book_title')->textInput(['maxlength' => true]) ?>
 
