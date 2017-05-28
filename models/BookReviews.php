@@ -33,8 +33,17 @@ class BookReviews extends \yii\db\ActiveRecord
             [['review'], 'string'],
             [['book_title', 'author', 'amazon_url'], 'string', 'max' => 255],
             ['book_title', 'unique'],
-            ['book_title', 'validateTitle', 'params' => ['author' => 'author', 'amazon_url' => 'amazon_url', 'review' => 'review']]
+            ['book_title', 'validateTitle', 'params' => ['author' => 'author', 'amazon_url' => 'amazon_url', 'review' => 'review']],
+            [['image'], 'required', 'on' => 'update-image'],
+            [['image'], 'file', 'extensions' => 'png, jpg, gif']
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['update-image'] = ['image'];
+        return $scenarios;
     }
 
     public function validateTitle($attribute, $params)
@@ -61,6 +70,7 @@ class BookReviews extends \yii\db\ActiveRecord
             'author' => 'Author',
             'amazon_url' => 'Amazon Url',
             'review' => 'Your Review',
+            'image' => 'Book Cover',
         ];
     }
 }

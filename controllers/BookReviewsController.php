@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * BookReviewsController implements the CRUD actions for BookReviews model.
@@ -90,6 +91,38 @@ class BookReviewsController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionUpdateImage($id)
+    {
+        $model = $this->findModel($id);
+        $model->scenario = 'update-image';
+
+        if ($model->load(Yii::$app->request->post()))
+        {
+
+            //get instance of the image
+            $image = UploadedFile::getInstance($model, 'image');
+
+            //get image name
+            $model->image = $image->baseName . "." . $image->extension;
+
+            //go through the validation rules and IF cool save
+            if($model->save())
+            {
+                //all is cool. So, upload the image
+                $image->saveAs('uploads/' . $model->image);
+
+                //redirect to the view (details) page
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+        else
+        {
+            return $this->render('update-image', [
                 'model' => $model,
             ]);
         }
